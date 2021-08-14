@@ -39,7 +39,7 @@ const cache = {
   prequery: null,
 };
 export default defineComponent({
-  name: "antComponet",
+  name: "table-page",
   components: {
     SearchOutlined,
     ReloadOutlined,
@@ -73,9 +73,7 @@ export default defineComponent({
       state.query.pageSize = state.opts.pagination?.pageSize;
     };
     let queryComplete = computed(
-      () => state.query,
       () => {
-        console.log("运行");
         //1.处理分页参数[current,pageSize] -->this.pageKey.current,this.pageKey.pageSize  处理传出去的参数
         //2.过滤空数据
         let res = cloneDeep(state.query);
