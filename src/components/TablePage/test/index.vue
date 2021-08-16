@@ -44,20 +44,17 @@ export default {
           slots: { customRender: "operation" },
         },
       ],
-      dataSource: [{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:2,a:3}],
+      //dataSource: [{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:2,a:3}],
     });
-    setTimeout(()=>{
-      tablePageConfig.dataSource = [{id:1,a:3}];
-      console.log("运行");
-    },2000)
-    // tablePageConfig.dataSource = async (params) => {
-    //   console.log("params", params);
-    //   let { data } = await api.get(
-    //     "http://yapi.dev.patpat.vip/mock/16/list_filter",
-    //     params
-    //   );
-    //   return [data.list, data.total];
-    // };
+ 
+    tablePageConfig.dataSource = async (params) => {
+      console.log("params", params);
+      let { data } = await api.get(
+        "http://yapi.dev.patpat.vip/mock/16/list_filter",
+        params
+      );
+      return [data.list, data.total];
+    };
     return { tablePageConfig };
   },
 };
