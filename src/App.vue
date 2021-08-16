@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import TablePage from './components/TablePage/index.vue'
+import TablePage from './components/TablePage/test/index.vue'
 
 export default defineComponent({
   name: 'App',

@@ -21,8 +21,8 @@
 <script>
 import { reactive } from "vue";
 import { PlusOutlined, DownloadOutlined } from "@ant-design/icons-vue";
-import MTable from "./MTable.vue";
-import { api } from "./utils.js";
+import MTable from "./../Table.vue";
+import { api } from "../utils.js";
 import moment from "moment";
 
 export default {
@@ -44,16 +44,20 @@ export default {
           slots: { customRender: "operation" },
         },
       ],
-      //dataSource: [{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:2,a:3}],
+      dataSource: [{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:2,a:3}],
     });
-    tablePageConfig.dataSource = async (params) => {
-      console.log("params", params);
-      let { data } = await api.get(
-        "http://yapi.dev.patpat.vip/mock/16/list_filter",
-        params
-      );
-      return [data.list, data.total];
-    };
+    setTimeout(()=>{
+      tablePageConfig.dataSource = [{id:1,a:3}];
+      console.log("运行");
+    },2000)
+    // tablePageConfig.dataSource = async (params) => {
+    //   console.log("params", params);
+    //   let { data } = await api.get(
+    //     "http://yapi.dev.patpat.vip/mock/16/list_filter",
+    //     params
+    //   );
+    //   return [data.list, data.total];
+    // };
     return { tablePageConfig };
   },
 };
