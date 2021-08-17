@@ -1,21 +1,7 @@
 <template>
   <div style="padding: 15px">
     <a-card :bordered="false">
-      <m-table v-bind="tablePageConfig" ref="tableRef">
-        <template #search-after="{ query }">
-          <a-form-item>
-            <a-switch
-              v-model:checked="query.switch"
-              @change="change"
-            ></a-switch>
-            只看我
-          </a-form-item>
-        </template>
-
-        <template #toolbar>
-          <a-button><PlusOutlined />添加</a-button>
-          <a-button><DownloadOutlined />导出</a-button>
-        </template>
+      <m-table v-bind="tablePageConfig">
         <template #operation="{ text, record, index }">
           <a @click="handleUpdate(text)"> 修改 </a>
           <!-- <a-icon type="edit" /> -->
@@ -33,7 +19,7 @@
   </div>
 </template>
 <script>
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { PlusOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 import MTable from "../Table.vue";
 import { api } from "../utils.js";
@@ -48,19 +34,16 @@ export default {
   setup() {
     let tablePageConfig = reactive({
       formItem: {
-        is_mine: {
-          value: true,
-        },
         "a:userId": {
           component: "AInput", //或者 a-input
           label: "AInput",
           value: "aaa", //默认值
           props: {
             placeholder: "请输入字典名称", //不加默认会加上 请输入 + label
-          },
+          }
         },
         b: {
-          search: "userId2",
+          search:"userId2",
           label: "AAutoComplete",
           component: "AAutoComplete", //或者 a-auto-complete
           value: "2", //默认值
@@ -115,7 +98,7 @@ export default {
           component: "AMonthPicker",
           value: "",
         },
-
+       
         i: {
           label: "AWeekPicker",
           component: "AWeekPicker",
@@ -265,13 +248,7 @@ export default {
       );
       return [data.list, data.total];
     };
-
-    let tableRef = ref(null);
-    let change = () => {
-      console.log(tableRef);
-      tableRef.value.search();
-    };
-    return { tableRef, tablePageConfig, change };
+    return { tablePageConfig };
   },
 };
 </script>

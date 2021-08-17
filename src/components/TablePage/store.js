@@ -19,14 +19,14 @@ export const _defaultTable = {
 const cache = {
     query: null,
 };
-
+const defaultSolts = ["search", "search-after", "toolbar"]
 export function createdStore(props, context) {
     let state = reactive({
         query: {},
         loading: false,
         data: [],
         opts: {},
-        slots: computed(() => Object.keys(context.slots)),
+        slots: computed(() => Object.keys(context.slots).filter(v => !defaultSolts.includes(v))),
         cache,
         formItem: props.formItem,
         renderFormItem: []

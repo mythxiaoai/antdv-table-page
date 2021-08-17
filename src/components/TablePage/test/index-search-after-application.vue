@@ -12,7 +12,7 @@
           </a-form-item>
         </template>
 
-        <template #toolbar>
+        <template #table-operator>
           <a-button><PlusOutlined />添加</a-button>
           <a-button><DownloadOutlined />导出</a-button>
         </template>
