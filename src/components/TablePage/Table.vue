@@ -1,5 +1,52 @@
 <template>
   <div class="antv-table-page">
+    <!-- <p>query:{{ query }}</p> -->
+    <p>renderFormItem:{{ renderFormItem }}</p>
+    <!-- <p>searchFormItem:{{ searchFormItem }}</p> -->
+    <!-- <p>filterFormItem:{{ filterFormItem }}</p> -->
+    <!-- <p>editFormItem:{{ editFormItem }}</p> -->
+    <!-- <p>opts:{{ opts }}</p> -->
+    <!-- <p>editTitleSlots:{{ editTitleSlots }}</p> -->
+    <!-- <p>renderSlots:{{ renderSlots }}</p> -->
+    <!-- <p>editableData:{{ editableData }}</p> -->
+    <!-- <p>data:{{ data }}</p> -->
+
+    <!--search start-->
+    <slot name="search" :query="query">
+      <a-form
+        layout="inline"
+        @keyup.enter="search"
+        v-if="searchFormItem.length > 0"
+      >
+        <template v-for="item in searchFormItem" :key="item.p.name">
+          <a-form-item v-bind="item.p">
+            <ant-component
+              :props="item.s"
+              :component="item.component"
+              v-model:value="query[item.p.name]"
+            ></ant-component>
+          </a-form-item>
+        </template>
+        <a-form-item>
+          <a-space>
+            <a-button type="primary" @click="search"
+              ><SearchOutlined />查询
+            </a-button>
+            <a-button @click="searchReset">
+              <ReloadOutlined />
+              重置
+            </a-button>
+          </a-space>
+        </a-form-item>
+        <slot name="search-after" :query="query"></slot>
+      </a-form>
+    </slot>
+    <!--end search-->
+
+    <div class="toolbar">
+      <slot name="toolbar" :query="cloneDeep(query)"></slot>
+    </div>
+
     <!--表格页面插槽-->
     <a-table
       :loading="loading"
@@ -18,18 +65,26 @@
 
 <script>
 import { SearchOutlined, ReloadOutlined } from "@ant-design/icons-vue";
+import AntComponent from "./AntComponent.vue";
 import { defineComponent, toRefs } from "vue";
 //外界可以导出修改配置
 import { createdStore } from "./store.js";
 import { useTable } from "./table.js";
+import { useSearch } from "./search.js";
+import { cloneDeep } from "lodash";
 
 export default defineComponent({
   name: "table-page",
   components: {
     SearchOutlined,
     ReloadOutlined,
+    AntComponent,
   },
   props: {
+    formItem: {
+      type: Object,
+      default: () => {},
+    },
     dataSource: {
       type: [Function, Array],
       default() {
@@ -39,10 +94,18 @@ export default defineComponent({
   },
   setup(props, context) {
     let state = createdStore(props, context);
-    let { pagingChange, list, initPagination } = useTable(state,props);
+    let { pagingChange, list, initPagination } = useTable(state, props);
+    let { searchFormItem, searchReset, search } = useSearch(state, props);
     initPagination();
     list();
-    return { ...toRefs(state), pagingChange };
+    return {
+      searchFormItem,
+      ...toRefs(state),
+      pagingChange,
+      cloneDeep,
+      searchReset,
+      search,
+    };
   },
 });
 </script>
@@ -95,14 +158,14 @@ export default defineComponent({
 }
 /**end search-wrapper */
 
-/**start table-operator */
-.antv-table-page .table-operator {
+/**start toolbar */
+.antv-table-page .toolbar {
   margin-bottom: 8px;
 }
-.antv-table-page .table-operator .ant-btn {
+.antv-table-page .toolbar .ant-btn {
   margin: 0 8px 8px 0;
 }
-/**end  table-operator*/
+/**end  toolbar*/
 /*start m-filter */
 .m-filter {
   text-align: center;

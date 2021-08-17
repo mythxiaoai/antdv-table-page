@@ -1,5 +1,5 @@
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
-import { defineComponent, toRefs, reactive,shallowReactive,watch, computed, unref } from "vue";//可以导出并设置初始值
+import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref } from "vue";//可以导出并设置初始值
 
 export const _defaultTable = {
     rowKey: "id",
@@ -20,16 +20,18 @@ const cache = {
     query: null,
 };
 
-export function createdStore(props,context) {
+export function createdStore(props, context) {
     let state = reactive({
         query: {},
         loading: false,
         data: [],
         opts: {},
         slots: computed(() => Object.keys(context.slots)),
-        cache
-      });
-      //处理参数
-      state.opts = merge({}, _defaultTable, context.attrs,props);
+        cache,
+        formItem: props.formItem,
+        renderFormItem: []
+    });
+    //处理参数
+    state.opts = merge({}, _defaultTable, context.attrs, props);
     return state
 }
