@@ -1,7 +1,7 @@
 <template>
   <div class="antv-table-page">
     <!-- <p>query:{{ query }}</p> -->
-    <p>renderFormItem:{{ renderFormItem }}</p>
+    <!-- <p>renderFormItem:{{ renderFormItem }}</p> -->
     <!-- <p>searchFormItem:{{ searchFormItem }}</p> -->
     <!-- <p>filterFormItem:{{ filterFormItem }}</p> -->
     <!-- <p>editFormItem:{{ editFormItem }}</p> -->
@@ -58,19 +58,26 @@
       <template v-for="item in slots" #[item]="res">
         <slot :name="item" v-bind="res"></slot>
       </template>
+      <!--filter start-->
+      <template #_filterIcon="{ column }">
+        <FilterFilled :style="getColor(column.key)"></FilterFilled>
+      </template>
+      <!--end filter-->
+      
       <slot></slot>
     </a-table>
   </div>
 </template>
 
 <script>
-import { SearchOutlined, ReloadOutlined } from "@ant-design/icons-vue";
+import { SearchOutlined, ReloadOutlined,FilterFilled } from "@ant-design/icons-vue";
 import AntComponent from "./AntComponent.vue";
 import { defineComponent, toRefs } from "vue";
 //外界可以导出修改配置
 import { createdStore } from "./store.js";
 import { useTable } from "./table.js";
 import { useSearch } from "./search.js";
+import { useFilter } from "./filter.js";
 import { cloneDeep } from "lodash";
 
 export default defineComponent({
@@ -78,6 +85,7 @@ export default defineComponent({
   components: {
     SearchOutlined,
     ReloadOutlined,
+    FilterFilled,
     AntComponent,
   },
   props: {
@@ -96,10 +104,12 @@ export default defineComponent({
     let state = createdStore(props, context);
     let { pagingChange, list, initPagination } = useTable(state, props);
     let { searchFormItem, searchReset, search } = useSearch(state, props);
+    let { filterFormItem ,getColor} = useFilter(state, props);
     initPagination();
     list();
     return {
       searchFormItem,
+      filterFormItem,
       ...toRefs(state),
       pagingChange,
       cloneDeep,

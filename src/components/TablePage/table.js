@@ -1,10 +1,12 @@
 import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref } from "vue";//可以导出并设置初始值
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
 import { useSearch } from "./search.js";
+import { useFilter } from "./filter.js";
 import moment from 'moment'
 
 export function useTable(state, props) {
     let { initSearch } = useSearch(state);
+    let { initFilter } = useFilter(state);
     let queryComplete = computed(
         () => {
             //1.处理分页参数[current,pageSize] -->this.pageKey.current,this.pageKey.pageSize  处理传出去的参数
@@ -29,13 +31,9 @@ export function useTable(state, props) {
                     keyOperator = arr.pop()
                 }
                 //对search,filter做处理  filter优先级会高一些
-                console.log("state.renderFormItem",state.renderFormItem);
-                console.log("key",key);
-                let item = state.renderFormItem.find(v=>v.p.name === key);
-                console.log("item",item);
+                let item = state.renderFormItem.find(v => v.p.name === key);
                 if (item?.search && typeof item.search === 'string') {
                     keyUserSeting = item.search
-                    console.log("进来",keyUserSeting)
                 }
                 if (item?.filter && typeof item.filter === 'string') {
                     keyUserSeting = item.filter
@@ -73,7 +71,6 @@ export function useTable(state, props) {
         }
         if (!isQueryChange(state.cache.query, unref(queryComplete))) return;
         state.loading = true;
-        console.log("unref(queryComplete)",unref(queryComplete));
         let [data, total] = await state.opts.dataSource(unref(queryComplete));
         state.loading = false;
         state.data = data;
@@ -88,6 +85,7 @@ export function useTable(state, props) {
     });
     watch(() => props.formItem, (value) => {
         initSearch();
+        initFilter();
         state.renderFormItem = getRenderFormItem(value);
     }, { deep: true, immediate: true });
 

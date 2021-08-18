@@ -17,7 +17,7 @@ export function useSearch(state) {
   }
   let searchFormItem = computed(() => {
     return state.renderFormItem.filter((v) => {
-      return v.search
+      return v.search && !v.filter
     })
   });
   let search = ()=>{
@@ -31,6 +31,7 @@ export function useSearch(state) {
     //重置参数
     initSearch()
   }
+  state.search = search;
   return { searchFormItem,initSearch,search,searchReset}
 }
 
