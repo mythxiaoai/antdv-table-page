@@ -4,20 +4,14 @@ import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
 export function useSearch(state) {
   let initSearch = () => {
     let query = {}
-    let formItem = cloneDeep(state.formItem)
-    Object.keys(formItem).forEach((key) => {
-      let o = formItem[key]
-      //过滤出只加字段的
-      if (!o.component) {
-        delete state.formItem[key]
-      }
-      query[key] = o.value || null
+    state.renderFormItem.forEach((o) => {
+      query[o.p.name] = o.value;
     })
     state.query = query
   }
   let searchFormItem = computed(() => {
     return state.renderFormItem.filter((v) => {
-      return v.search && !v.filter
+      return v.component &&v.search && !v.filter
     })
   });
   let search = ()=>{

@@ -84,9 +84,9 @@ export function useTable(state, props) {
         list()
     });
     watch(() => props.formItem, (value) => {
-        initSearch();
-        initFilter();
         state.renderFormItem = getRenderFormItem(value);
+        initSearch();
+        // initFilter();
     }, { deep: true, immediate: true });
 
     //暴露出去其他模块使用
@@ -102,15 +102,17 @@ function isQueryChange(Oquery, query) {
     return JSON.stringify(Oquery) !== JSON.stringify(query)
 }
 
-//公共的处理
+//公共的处理 转换参数
 function getRenderFormItem(formItem) {
     let arr = []
     let res = cloneDeep(formItem)
+    console.log(Object.keys(res))
     Object.keys(res).forEach((key) => {
         let o = res[key],
             p
         let props = o.props || {}
-        let component = transfUnderline(o.component);
+        let component = o.component && transfUnderline(o.component)
+        let value = o.value || null;
         let search = o.search || true
         let filter = o.filter
         let edit = o.edit;
@@ -122,11 +124,12 @@ function getRenderFormItem(formItem) {
             })
         p = { name: key, ...o }
         //小优化
-        optimize(component, p, props)
+        component && optimize(component, p, props)
         arr.push({
             p,
             component,
             s: props,
+            value,
             search,
             filter,
             edit

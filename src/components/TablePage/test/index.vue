@@ -60,7 +60,7 @@ export default {
           },
         },
         b: {
-          search: "userId2",
+          search: false,
           label: "AAutoComplete",
           component: "AAutoComplete", //或者 a-auto-complete
           value: "2", //默认值
