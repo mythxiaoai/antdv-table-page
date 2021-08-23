@@ -69,14 +69,14 @@ export function useTable(state, props) {
             state.opts.pagination.total = state.opts.dataSource.length;
             return;
         }
-        if (!isQueryChange(state.cache.query, unref(queryComplete))) return;
+        if (!isQueryChange(state.cache.preQuery, unref(queryComplete))) return;
         state.loading = true;
         let [data, total] = await state.opts.dataSource(unref(queryComplete));
         state.loading = false;
         state.data = data;
         if (state.opts.pagination) state.opts.pagination.total = total ?? false;
         //记录
-        state.cache.query = cloneDeep(unref(queryComplete))
+        state.cache.preQuery = cloneDeep(unref(queryComplete))
     };
 
     watch(() => props.dataSource, (value) => {
@@ -84,9 +84,12 @@ export function useTable(state, props) {
         list()
     });
     watch(() => props.formItem, (value) => {
+        //第一次进来的起始
+        //render出需要渲染的数据
         state.renderFormItem = getRenderFormItem(value);
-        initSearch();
-        // initFilter();
+        initSearch();//查询
+        initFilter();//过滤
+        console.log(state.opts.columns)
     }, { deep: true, immediate: true });
 
     //暴露出去其他模块使用
@@ -106,18 +109,15 @@ function isQueryChange(Oquery, query) {
 function getRenderFormItem(formItem) {
     let arr = []
     let res = cloneDeep(formItem)
-    console.log(Object.keys(res))
     Object.keys(res).forEach((key) => {
         let o = res[key],
             p
         let props = o.props || {}
         let component = o.component && transfUnderline(o.component)
         let value = o.value || null;
-        let search = o.search || true
-        let filter = o.filter
-        let edit = o.edit;
-        //delete key
-
+        let search = o.search ?? true
+        let filter = o.filter ?? false
+        let edit = o.edit ?? false;
         ;["props", "component", "value", "search", "filter", "edit"]
             .forEach(v => {
                 delete o[v];

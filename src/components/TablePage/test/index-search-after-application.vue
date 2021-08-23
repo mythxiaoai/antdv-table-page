@@ -3,15 +3,13 @@
     <a-card :bordered="false">
       <m-table v-bind="tablePageConfig" ref="tableRef">
         <template #search-after="{ query }">
-          <a-form-item>
+          <a-form-item label="只看我">
             <a-switch
               v-model:checked="query.switch"
               @change="change"
             ></a-switch>
-            只看我
           </a-form-item>
         </template>
-
         <template #table-operator>
           <a-button><PlusOutlined />添加</a-button>
           <a-button><DownloadOutlined />导出</a-button>

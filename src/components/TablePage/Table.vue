@@ -1,11 +1,11 @@
 <template>
   <div class="antv-table-page">
-    <!-- <p>query:{{ query }}</p> -->
+    <p>query:{{ query }}</p>
     <!-- <p>renderFormItem:{{ renderFormItem }}</p> -->
     <!-- <p>searchFormItem:{{ searchFormItem }}</p> -->
-    <!-- <p>filterFormItem:{{ filterFormItem }}</p> -->
+    <p>filterFormItem:{{ filterFormItem }}</p>
     <!-- <p>editFormItem:{{ editFormItem }}</p> -->
-    <!-- <p>opts:{{ opts }}</p> -->
+    <!-- <p>opts:{{ opts.columns }}</p> -->
     <!-- <p>editTitleSlots:{{ editTitleSlots }}</p> -->
     <!-- <p>renderSlots:{{ renderSlots }}</p> -->
     <!-- <p>editableData:{{ editableData }}</p> -->
@@ -13,21 +13,17 @@
 
     <!--search start-->
     <slot name="search" :query="query">
-      <a-form
-        layout="inline"
-        @keyup.enter="search"
-        v-if="searchFormItem.length > 0"
-      >
+      <a-form layout="inline" @keyup.enter="search">
         <template v-for="item in searchFormItem" :key="item.p.name">
           <a-form-item v-bind="item.p">
             <ant-component
-              :props="item.s"
+              :attr="item.s"
               :component="item.component"
               v-model:value="query[item.p.name]"
             ></ant-component>
           </a-form-item>
         </template>
-        <a-form-item>
+        <a-form-item v-if="searchFormItem.length > 0">
           <a-space>
             <a-button type="primary" @click="search"
               ><SearchOutlined />查询
@@ -43,7 +39,7 @@
     </slot>
     <!--end search-->
 
-    <div class="toolbar">
+    <div class="toolbar" >
       <slot name="toolbar" :query="cloneDeep(query)"></slot>
     </div>
 
@@ -62,15 +58,41 @@
       <template #_filterIcon="{ column }">
         <FilterFilled :style="getColor(column.key)"></FilterFilled>
       </template>
+      <template #_filterDropdown="{ column, confirm }">
+        <div class="m-filter" style="padding: 8px">
+          <ant-component
+            :attr="filterFormItem[column.key].s"
+            :component="filterFormItem[column.key].component"
+            v-model:value="query[column.key]"
+            ref="filterComponent"
+          ></ant-component>
+          <div class="opts">
+            <a-button
+              type="primary"
+              size="small"
+              @click="filterSearch(confirm)"
+            >
+              <SearchOutlined />查询
+            </a-button>
+            <a-button size="small" @click="filterReset(column, confirm)">
+              <ReloadOutlined />重置
+            </a-button>
+          </div>
+        </div>
+      </template>
       <!--end filter-->
-      
+
       <slot></slot>
     </a-table>
   </div>
 </template>
 
 <script>
-import { SearchOutlined, ReloadOutlined,FilterFilled } from "@ant-design/icons-vue";
+import {
+  SearchOutlined,
+  ReloadOutlined,
+  FilterFilled,
+} from "@ant-design/icons-vue";
 import AntComponent from "./AntComponent.vue";
 import { defineComponent, toRefs } from "vue";
 //外界可以导出修改配置
@@ -81,6 +103,7 @@ import { useFilter } from "./filter.js";
 import { cloneDeep } from "lodash";
 
 export default defineComponent({
+  inheritAttrs:false,
   name: "table-page",
   components: {
     SearchOutlined,
@@ -104,17 +127,27 @@ export default defineComponent({
     let state = createdStore(props, context);
     let { pagingChange, list, initPagination } = useTable(state, props);
     let { searchFormItem, searchReset, search } = useSearch(state, props);
-    let { filterFormItem ,getColor} = useFilter(state, props);
+    let {
+      filterComponent,
+      filterFormItem,
+      getColor,
+      filterSearch,
+      filterReset,
+    } = useFilter(state, props);
     initPagination();
     list();
     return {
       searchFormItem,
       filterFormItem,
+      filterComponent,
       ...toRefs(state),
       pagingChange,
       cloneDeep,
       searchReset,
       search,
+      getColor,
+      filterSearch,
+      filterReset,
     };
   },
 });
@@ -178,7 +211,7 @@ export default defineComponent({
 /**end  toolbar*/
 /*start m-filter */
 .m-filter {
-  text-align: center;
+  /* text-align: center; */
 }
 .m-filter .ant-select,
 .m-filter .ant-slider,

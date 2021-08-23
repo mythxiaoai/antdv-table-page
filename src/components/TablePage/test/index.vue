@@ -48,93 +48,135 @@ export default {
   setup() {
     let tablePageConfig = reactive({
       formItem: {
-        is_mine: {
-          value: true,
-        },
-        "a:userId": {
-          component: "AInput", //或者 a-input
-          label: "AInput",
-          value: "aaa", //默认值
+        "a:roleId": {
+          component: "AInput",
+          label: "普通输入框",
+          value: "",
           props: {
-            placeholder: "请输入字典名称", //不加默认会加上 请输入 + label
+            placeholder: "请输入字典名称",
           },
+          filter: true,
         },
-        b: {
-          search: false,
+        "b:userName": {
           label: "AAutoComplete",
-          component: "AAutoComplete", //或者 a-auto-complete
-          value: "2", //默认值
+          component: "AAutoComplete",
+          value: "",
           props: {
             options: [
-              { text: "a", value: "1" },
-              { text: "b", value: "2" },
-              { text: "c", value: "3" },
+              {
+                text: "a",
+                value: "1",
+              },
+              {
+                text: "b",
+                value: "2",
+              },
+              {
+                text: "c",
+                value: "3",
+              },
             ],
           },
+          search: false,
+          filter: false,
         },
         c: {
           label: "ACascader",
           component: "ACascader",
-          value: [], //默认值
+          value: [],
           props: {
             options: [
               {
                 label: "a",
                 value: "1",
-                children: [{ label: "a", value: "1" }],
+                children: [
+                  {
+                    label: "a",
+                    value: "1",
+                  },
+                ],
               },
-              { label: "b", value: "2" },
-              { label: "c", value: "3" },
+              {
+                label: "b",
+                value: "2",
+              },
+              {
+                label: "c",
+                value: "3",
+              },
             ],
           },
+          filter: true,
         },
         d: {
           label: "ACheckbox",
           component: "ACheckbox",
-          value: true, //默认值
+          value: false,
+          filter: true,
         },
         e: {
           label: "ACheckboxGroup",
           component: "ACheckboxGroup",
-          value: ["1"], //默认值
+          value: ["1"],
           props: {
             options: [
-              { label: "Apple", value: "1" },
-              { label: "Pear", value: "2" },
-              { label: "Orange", value: "3" },
+              {
+                label: "Apple",
+                value: "1",
+              },
+              {
+                label: "Pear",
+                value: "2",
+              },
+              {
+                label: "Orange",
+                value: "3",
+              },
             ],
           },
+          filter: true,
         },
         f: {
           label: "ADatePicker",
           component: "ADatePicker",
-          value: "", //或者设置默认时间 moment()  输出的都是Moment对象但是get请求会默认转化为utc,其他情况需要utc请在第38行自行格式化moment().utc().format()
+          value: "",
+          filter: true,
         },
         g: {
           label: "AMonthPicker",
           component: "AMonthPicker",
           value: "",
+          filter: true,
         },
-
+        h: {
+          label: "ARangePicker",
+          component: "ARangePicker",
+          value: [],
+          filter: true,
+        },
         i: {
           label: "AWeekPicker",
           component: "AWeekPicker",
           value: "",
+          filter: true,
         },
         j: {
           label: "ATextarea",
           component: "ATextarea",
           value: "",
+          filter: true,
         },
         k: {
           label: "AInputSearch",
           component: "AInputSearch",
           value: "",
+          filter: true,
         },
         l: {
           label: "AInputNumber",
           component: "AInputNumber",
           value: 0,
+          filter: true,
         },
         m: {
           label: "AMentions",
@@ -142,33 +184,55 @@ export default {
           value: "2",
           props: {
             options: [
-              { label: "Apple", value: "1" },
-              { label: "Pear", value: "2" },
-              { label: "Orange", value: "3" },
+              {
+                label: "Apple",
+                value: "1",
+              },
+              {
+                label: "Pear",
+                value: "2",
+              },
+              {
+                label: "Orange",
+                value: "3",
+              },
             ],
           },
+          filter: true,
         },
         n: {
           label: "ARadio",
           component: "ARadio",
           value: false,
+          filter: true,
         },
         o: {
           label: "ARadioGroup",
           component: "ARadioGroup",
-          value: "2", //默认值
+          value: "2",
           props: {
             options: [
-              { label: "Apple", value: "1" },
-              { label: "Pear", value: "2" },
-              { label: "Orange", value: "3" },
+              {
+                label: "Apple",
+                value: "1",
+              },
+              {
+                label: "Pear",
+                value: "2",
+              },
+              {
+                label: "Orange",
+                value: "3",
+              },
             ],
           },
+          filter: true,
         },
         p: {
           label: "ARate",
           component: "ARate",
-          value: 2, //默认值
+          value: 2,
+          filter: true,
         },
         q: {
           label: "ASelect",
@@ -176,12 +240,25 @@ export default {
           value: "",
           props: {
             options: [
-              { label: "--请选择--", value: "" },
-              { label: "Apple", value: "1" },
-              { label: "Pear", value: "2" },
-              { label: "Orange", value: "3" },
+              {
+                label: "--请选择--",
+                value: "",
+              },
+              {
+                label: "Apple",
+                value: "1",
+              },
+              {
+                label: "Pear",
+                value: "2",
+              },
+              {
+                label: "Orange",
+                value: "3",
+              },
             ],
           },
+          filter: true,
         },
         r: {
           label: "ASelect 多选",
@@ -190,26 +267,39 @@ export default {
           props: {
             mode: "multiple",
             options: [
-              { label: "Apple", value: "1" },
-              { label: "Pear", value: "2" },
-              { label: "Orange", value: "3" },
+              {
+                label: "Apple",
+                value: "1",
+              },
+              {
+                label: "Pear",
+                value: "2",
+              },
+              {
+                label: "Orange",
+                value: "3",
+              },
             ],
           },
+          filter: true,
         },
         s: {
           label: "ASlider",
           component: "ASlider",
           value: 44,
+          filter: true,
         },
         t: {
           label: "ASwitch",
           component: "ASwitch",
           value: true,
+          filter: true,
         },
         u: {
           label: "ATimePicker",
           component: "ATimePicker",
-          value: "", //moment('08:00:00', 'HH:mm:ss')
+          value: "",
+          filter: true,
         },
         v: {
           label: "ATreeSelect",
@@ -241,13 +331,32 @@ export default {
               },
             ],
           },
+          filter: true,
         },
       },
       columns: [
-        { title: "a", dataIndex: "a" },
-        { title: "b", dataIndex: "b" },
-        { title: "c", dataIndex: "c" },
-        { title: "d", dataIndex: "d" },
+        { title: "AInput", dataIndex: "a" },
+        { title: "AAutoComplete", dataIndex: "b" },
+        { title: "ACascader", dataIndex: "c" },
+        { title: "ACheckbox", dataIndex: "d" },
+        { title: "ACheckboxGroup", dataIndex: "e" },
+        { title: "ADatePicker", dataIndex: "f" },
+        { title: "AMonthPicker", dataIndex: "g" },
+        { title: "ARangePicker", dataIndex: "h" },
+        { title: "AWeekPicker", dataIndex: "i" },
+        { title: "ATextarea", dataIndex: "j" },
+        { title: "AInputSearch", dataIndex: "k" },
+        { title: "AInputNumber", dataIndex: "l" },
+        { title: "AMentions", dataIndex: "m" },
+        { title: "ARadio", dataIndex: "n" },
+        { title: "ARadioGroup", dataIndex: "o" },
+        { title: "ARate", dataIndex: "p" },
+        { title: "ASelect", dataIndex: "q" },
+        { title: "ASelect", dataIndex: "r" },
+        { title: "ASlider", dataIndex: "s" },
+        { title: "ASwitch", dataIndex: "t" },
+        { title: "ATimePicker", dataIndex: "u" },
+        { title: "ATreeSelect", dataIndex: "v" },
         {
           title: "操作",
           key: "operation",

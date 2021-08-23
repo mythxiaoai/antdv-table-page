@@ -17,7 +17,8 @@ export const _defaultTable = {
 };
 
 const cache = {
-    query: null,
+    preQuery: null,//上一次的查询条件,为了减少相同条件重复请求
+    query: null//第一次格式化的查询条件,保留第一次进来的默认值，方便重置回初始值
 };
 const defaultSolts = ["search", "search-after", "toolbar"]
 export function createdStore(props, context) {
