@@ -39,7 +39,7 @@
     </slot>
     <!--end search-->
 
-    <div class="toolbar" >
+    <div class="toolbar">
       <slot name="toolbar" :query="cloneDeep(query)"></slot>
     </div>
 
@@ -59,13 +59,13 @@
         <FilterFilled :style="getColor(column.key)"></FilterFilled>
       </template>
       <template #_filterDropdown="{ column, confirm }">
-        <div class="m-filter" style="padding: 8px">
-          <ant-component
-            :attr="filterFormItem[column.key].s"
-            :component="filterFormItem[column.key].component"
-            v-model:value="query[column.key]"
-            ref="filterComponent"
-          ></ant-component>
+        <div class="m-filter" style="padding: 8px" @keyup.enter="filterSearch(confirm)">
+            <ant-component
+              :attr="filterFormItem[column.key].s"
+              :component="filterFormItem[column.key].component"
+              v-model:value="query[column.key]"
+              ref="filterComponent"
+            ></ant-component>
           <div class="opts">
             <a-button
               type="primary"
@@ -103,7 +103,7 @@ import { useFilter } from "./filter.js";
 import { cloneDeep } from "lodash";
 
 export default defineComponent({
-  inheritAttrs:false,
+  inheritAttrs: false,
   name: "table-page",
   components: {
     SearchOutlined,

@@ -1,5 +1,7 @@
 <template>
   <component
+    class="aaa"
+    ref="formRef"
     v-if="component === 'a-mentions'"
     :is="component"
     v-model:[model]="formItemValue"
@@ -15,6 +17,8 @@
     </a-mentions-option>
   </component>
   <component
+    class="aaa"
+    ref="formRef"
     v-else
     :is="component"
     v-model:[model]="formItemValue"

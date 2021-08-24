@@ -77,7 +77,7 @@ export default {
               },
             ],
           },
-          search: false,
+          search: true,
           filter: false,
         },
         c: {

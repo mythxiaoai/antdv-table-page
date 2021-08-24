@@ -1,16 +1,14 @@
-import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref,ref } from "vue";//可以导出并设置初始值
+import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref,ref,onMounted,nextTick } from "vue";//可以导出并设置初始值
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
 
 export function useFilter(state) {
-
-  let filterComponent = ref(null);
-
+  let filterComponent = ref(null)
   let filterFormItem = computed(() => {
     return state.renderFormItem.filter((v) => {
       return v.filter
     }).reduce((res, next) => ((res[next.p.name] = next), res), {})
   });
-
+ 
   let initFilter = () => {
     let columns = cloneDeep(state.opts.columns)
     state.opts.columns = columns.map((v) => {
@@ -25,12 +23,11 @@ export function useFilter(state) {
         v.slots = v.slots ?? {}
         v.slots.filterDropdown = '_filterDropdown'
         v.slots.filterIcon = '_filterIcon'
-        v.onFilterDropdownVisibleChange = (visible) => {
+        v.onFilterDropdownVisibleChange = async (visible) => {
           if (visible) {
-            //state.filterComponent.$el.autofocus = "true";
-            //获取焦点
-            console.log("visible", state.filterComponent.$el);
-            console.log("visible",state.filterComponent);
+            await nextTick();
+            //获取元素焦点
+            state.filterComponent.$el.focus?.()
           } else {
             //查询
             //当点击确定和移开和重置都会触发
