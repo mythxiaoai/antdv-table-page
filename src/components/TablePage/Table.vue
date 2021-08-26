@@ -1,9 +1,9 @@
 <template>
   <div class="antv-table-page">
-    <p>query:{{ query }}</p>
+    <!-- <p>query:{{ query }}</p> -->
     <!-- <p>renderFormItem:{{ renderFormItem }}</p> -->
     <!-- <p>searchFormItem:{{ searchFormItem }}</p> -->
-    <p>filterFormItem:{{ filterFormItem }}</p>
+    <!-- <p>filterFormItem:{{ filterFormItem }}</p> -->
     <!-- <p>editFormItem:{{ editFormItem }}</p> -->
     <!-- <p>opts:{{ opts.columns }}</p> -->
     <!-- <p>editTitleSlots:{{ editTitleSlots }}</p> -->
