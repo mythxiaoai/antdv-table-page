@@ -203,7 +203,7 @@ let mock={};
 for (const key in res) {
     if (Object.hasOwnProperty.call(res, key)) {
         const v = res[key];
-        v.filter = true;
+        v.edit = true;
         columns.push({ title: v.component, dataIndex: key });
         mock[key] = {
             "type": "string",

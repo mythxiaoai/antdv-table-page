@@ -2,7 +2,7 @@ import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, un
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
 
 export function useFilter(state) {
-  let filterComponent = ref(null)
+  let filterRef = ref(null)
   let filterFormItem = computed(() => {
     return state.renderFormItem.filter((v) => {
       return v.filter
@@ -27,7 +27,7 @@ export function useFilter(state) {
           if (visible) {
             await nextTick();
             //获取元素焦点
-            state.filterComponent.$el.focus?.()
+            state.filterRef.$el.focus?.()
           } else {
             //查询
             //当点击确定和移开和重置都会触发
@@ -55,8 +55,9 @@ export function useFilter(state) {
     state.query[column.key] = state.cache.query[column.key]
     close()
   }
-  state.filterComponent = filterComponent;
-  return { filterComponent,filterFormItem, initFilter, getColor, filterSearch, filterReset }
+  state.initFilter = initFilter;
+  state.filterRef = filterRef;
+  return { filterRef,filterFormItem, initFilter, getColor, filterSearch, filterReset }
 }
 
 function dealChaildren(v, cb) {

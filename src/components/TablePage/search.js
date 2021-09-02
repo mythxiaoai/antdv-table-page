@@ -28,6 +28,7 @@ export function useSearch(state) {
     //重置参数
     state.query = state.cache.query
   }
+  state.initSearch = initSearch;
   state.search = search;
   return { searchFormItem,initSearch,search,searchReset}
 }

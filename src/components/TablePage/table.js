@@ -1,12 +1,9 @@
 import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref } from "vue";//可以导出并设置初始值
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
-import { useSearch } from "./search.js";
-import { useFilter } from "./filter.js";
+
 import moment from 'moment'
 
-export function useTable(state, props) {
-    let { initSearch } = useSearch(state);
-    let { initFilter } = useFilter(state);
+export function useTable(state, props,context) {
     let queryComplete = computed(
         () => {
             //1.处理分页参数[current,pageSize] -->this.pageKey.current,this.pageKey.pageSize  处理传出去的参数
@@ -87,14 +84,17 @@ export function useTable(state, props) {
         //第一次进来的起始
         //render出需要渲染的数据
         state.renderFormItem = getRenderFormItem(value);
-        initSearch();//查询
-        initFilter();//过滤
+        state.initSearch();//查询
+        state.initFilter();//过滤
+        state.initEdit(state, props, context);//过滤
         console.log(state.opts.columns)
     }, { deep: true, immediate: true });
 
     //暴露出去其他模块使用
     state.initPagination = initPagination;
     state.list = list;
+
+    
     return { list, initPagination, pagingChange, queryComplete }
 }
 
@@ -147,15 +147,27 @@ function transfUnderline(str) {
     })
 }
 function optimize(component, p, s) {
+    const placeholderComponent = ['a-input', 'a-auto-complete', 'a-textarea', 'a-input-search', 'a-mentions'];
+    const showSearchComponent = ['a-select', 'a-tree-select', 'a-cascader'];
+    // const popComponent = ['a-cascader', 'a-tree-select', 'a-select'];
+    // cost TimeComponent = ['', 'a-tree-select', 'a-cascader'];
     //placeholder
-    if (
-        ['a-input', 'a-auto-complete', 'a-textarea', 'a-input-search', 'a-mentions'].includes(component)
-    ) {
+    if (placeholderComponent.includes(component)) {
         s.placeholder = s.placeholder ?? `请输入${p.label}`
     }
-    if (~component.indexOf('select') || component === 'a-cascader') {
+    //search
+    if (showSearchComponent.includes(component)) {
         s.placeholder = s.placeholder ?? `请选择${p.label}`
+        s.optionFilterProp = 'label'
+        s.showSearch = true
     }
+    //clear  可清除
+    s.allowClear = true;
+    //弹框的区域getPopupContainer
+    // if (popComponent.includes(component)) {
+    //     s.getPopupContainer = ()=>unref(state.editRef)
+    // }
+    
 }
 
 function isMoment(value) {

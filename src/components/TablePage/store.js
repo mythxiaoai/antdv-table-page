@@ -1,5 +1,5 @@
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
-import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref } from "vue";//可以导出并设置初始值
+import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref ,markRaw} from "vue";//可以导出并设置初始值
 
 export const _defaultTable = {
     rowKey: "id",
@@ -18,7 +18,8 @@ export const _defaultTable = {
 
 const cache = {
     preQuery: null,//上一次的查询条件,为了减少相同条件重复请求
-    query: null//第一次格式化的查询条件,保留第一次进来的默认值，方便重置回初始值
+    query: null,//第一次格式化的查询条件,保留第一次进来的默认值，方便重置回初始值
+    preEditValue:null,//上一次修改的查询做缓存
 };
 const defaultSolts = ["search", "search-after", "toolbar"]
 export function createdStore(props, context) {
@@ -30,7 +31,9 @@ export function createdStore(props, context) {
         slots: computed(() => Object.keys(context.slots).filter(v => !defaultSolts.includes(v))),
         cache,
         formItem: props.formItem,
-        renderFormItem: []
+        renderFormItem: [],
+        editValue:null,
+        editableData:null,
     });
     //处理参数
     state.opts = merge({}, _defaultTable, context.attrs, props);

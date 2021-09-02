@@ -1,15 +1,14 @@
 <template>
   <component
-    class="aaa"
     ref="formRef"
     v-if="component === 'a-mentions'"
     :is="component"
     v-model:[model]="formItemValue"
-    v-bind="attr"
+    v-bind="props"
   >
     <!--a-mentions的a-mentions-option处理(因为没有option选项配置)  还有一点因为a-month-picker等一部分时间组件是单标签组件,并没有插槽，所以不能内部用template做v-if的写法-->
     <a-mentions-option
-      v-for="sItem of attr.options"
+      v-for="sItem of props.options"
       :key="sItem.value"
       :value="sItem.value"
     >
@@ -17,12 +16,11 @@
     </a-mentions-option>
   </component>
   <component
-    class="aaa"
     ref="formRef"
     v-else
     :is="component"
     v-model:[model]="formItemValue"
-    v-bind="attr"
+    v-bind="props"
   ></component>
 </template>
 
@@ -41,7 +39,7 @@ export default defineComponent({
     value: {
       type: [Array, String, Number, Boolean, Object],
     },
-    attr: {
+    props: {
       type: Object,
       required: true,
     },

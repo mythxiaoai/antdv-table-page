@@ -1,7 +1,7 @@
 <template>
   <div style="padding: 15px">
     <a-card :bordered="false">
-      <m-table v-bind="tablePageConfig" ref="tableRef" @save="save">
+      <m-table v-bind="tablePageConfig" ref="tableRef">
         <template #search-after="{ query }">
           <a-form-item>
             <a-switch
@@ -48,36 +48,37 @@ export default {
   setup() {
     let tablePageConfig = reactive({
       formItem: {
-        a: {
+        "a:roleId": {
           component: "AInput",
           label: "普通输入框",
           value: "",
           props: {
             placeholder: "请输入字典名称",
           },
-          edit: true,
+          filter: true,
         },
-        "b:roleId": {
+        "b:userName": {
           label: "AAutoComplete",
           component: "AAutoComplete",
-          value: "2",//只是对search 和filter生效
+          value: "",
           props: {
             options: [
               {
-                label: "a",
+                text: "a",
                 value: "1",
               },
               {
-                label: "b",
+                text: "b",
                 value: "2",
               },
               {
-                label: "c",
+                text: "c",
                 value: "3",
               },
             ],
           },
-          edit: true,
+          search: true,
+          filter: false,
         },
         c: {
           label: "ACascader",
@@ -105,13 +106,13 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
         d: {
           label: "ACheckbox",
           component: "ACheckbox",
           value: false,
-          edit: true,
+          filter: true,
         },
         e: {
           label: "ACheckboxGroup",
@@ -133,49 +134,49 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
         f: {
           label: "ADatePicker",
           component: "ADatePicker",
           value: "",
-          edit: true,
+          filter: true,
         },
         g: {
           label: "AMonthPicker",
           component: "AMonthPicker",
           value: "",
-          edit: true,
+          filter: true,
         },
         h: {
           label: "ARangePicker",
           component: "ARangePicker",
           value: [],
-          edit: true,
+          filter: true,
         },
         i: {
           label: "AWeekPicker",
           component: "AWeekPicker",
           value: "",
-          edit: true,
+          filter: true,
         },
         j: {
           label: "ATextarea",
           component: "ATextarea",
           value: "",
-          edit: true,
+          filter: true,
         },
         k: {
           label: "AInputSearch",
           component: "AInputSearch",
           value: "",
-          edit: true,
+          filter: true,
         },
         l: {
           label: "AInputNumber",
           component: "AInputNumber",
           value: 0,
-          edit: true,
+          filter: true,
         },
         m: {
           label: "AMentions",
@@ -197,13 +198,13 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
         n: {
           label: "ARadio",
           component: "ARadio",
           value: false,
-          edit: true,
+          filter: true,
         },
         o: {
           label: "ARadioGroup",
@@ -225,18 +226,18 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
         p: {
           label: "ARate",
           component: "ARate",
           value: 2,
-          edit: true,
+          filter: true,
         },
         q: {
           label: "ASelect",
           component: "ASelect",
-          value: "1",
+          value: "",
           props: {
             options: [
               {
@@ -257,7 +258,7 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
         r: {
           label: "ASelect 多选",
@@ -280,25 +281,25 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
         s: {
           label: "ASlider",
           component: "ASlider",
           value: 44,
-          edit: true,
+          filter: true,
         },
         t: {
           label: "ASwitch",
           component: "ASwitch",
           value: true,
-          edit: true,
+          filter: true,
         },
         u: {
           label: "ATimePicker",
           component: "ATimePicker",
           value: "",
-          edit: true,
+          filter: true,
         },
         v: {
           label: "ATreeSelect",
@@ -330,7 +331,7 @@ export default {
               },
             ],
           },
-          edit: true,
+          filter: true,
         },
       },
       columns: [
@@ -362,40 +363,13 @@ export default {
           slots: { customRender: "operation" },
         },
       ],
-      dataSource: [
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, name: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 1, a: 1 },
-        { id: 2, a: 3 },
-      ],
+      //dataSource: [{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,name:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:1,a:1},{id:2,a:3}],
     });
 
     tablePageConfig.dataSource = async (params) => {
       console.log("params", params);
       let { data } = await api.get(
-        "http://yapi.dev.patpat.vip/mock/16/list_edit",
+        "http://yapi.dev.patpat.vip/mock/16/list_filter",
         params
       );
       return [data.list, data.total];
@@ -406,10 +380,7 @@ export default {
       console.log(tableRef);
       tableRef.value.search();
     };
-    let save = (val) => {
-      console.log(val);
-    };
-    return { tableRef, tablePageConfig, change, save };
+    return { tableRef, tablePageConfig, change };
   },
 };
 </script>

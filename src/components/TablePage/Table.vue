@@ -10,14 +10,13 @@
     <!-- <p>renderSlots:{{ renderSlots }}</p> -->
     <!-- <p>editableData:{{ editableData }}</p> -->
     <!-- <p>data:{{ data }}</p> -->
-
     <!--search start-->
     <slot name="search" :query="query">
-      <a-form layout="inline" @keyup.enter="search">
+      <a-form class="search" layout="inline" @keyup.enter="search">
         <template v-for="item in searchFormItem" :key="item.p.name">
           <a-form-item v-bind="item.p">
             <ant-component
-              :attr="item.s"
+              :props="item.s"
               :component="item.component"
               v-model:value="query[item.p.name]"
             ></ant-component>
@@ -59,13 +58,17 @@
         <FilterFilled :style="getColor(column.key)"></FilterFilled>
       </template>
       <template #_filterDropdown="{ column, confirm }">
-        <div class="m-filter" style="padding: 8px" @keyup.enter="filterSearch(confirm)">
-            <ant-component
-              :attr="filterFormItem[column.key].s"
-              :component="filterFormItem[column.key].component"
-              v-model:value="query[column.key]"
-              ref="filterComponent"
-            ></ant-component>
+        <div
+          class="m-filter"
+          style="padding: 8px"
+          @keyup.enter="filterSearch(confirm)"
+        >
+          <ant-component
+            :props="filterFormItem[column.key].s"
+            :component="filterFormItem[column.key].component"
+            v-model:value="query[column.key]"
+            ref="filterRef"
+          ></ant-component>
           <div class="opts">
             <a-button
               type="primary"
@@ -81,7 +84,24 @@
         </div>
       </template>
       <!--end filter-->
-
+      <!--edit start-->
+      <template #_edit="{ column, text, index }">
+        <span :class="{ edit_updated: column.updated[index] }">
+          <template v-if="editableData && isEditShow(column, index)">
+            <ant-component
+              class="{}"
+              :props="editFormItem[column.key].s"
+              :component="editFormItem[column.key].component"
+              ref="editRef"
+              v-model:value="editValue.value"
+            ></ant-component>
+          </template>
+          <template v-else>
+            {{ column._isOptions ? column._getOptionsLabel(text) : text }}
+          </template>
+        </span>
+      </template>
+      <!--end edit-->
       <slot></slot>
     </a-table>
   </div>
@@ -95,12 +115,15 @@ import {
 } from "@ant-design/icons-vue";
 import AntComponent from "./AntComponent.vue";
 import { defineComponent, toRefs } from "vue";
-//外界可以导出修改配置
-import { createdStore } from "./store.js";
+import { createdStore, _defaultTable as defaultConfig } from "./store.js";
 import { useTable } from "./table.js";
 import { useSearch } from "./search.js";
 import { useFilter } from "./filter.js";
+import { useEdit } from "./edit.js";
 import { cloneDeep } from "lodash";
+
+//外界可以导出修改配置
+export let _defaultTable = defaultConfig;
 
 export default defineComponent({
   inheritAttrs: false,
@@ -111,6 +134,7 @@ export default defineComponent({
     FilterFilled,
     AntComponent,
   },
+  emit: ["save"],
   props: {
     formItem: {
       type: Object,
@@ -125,21 +149,28 @@ export default defineComponent({
   },
   setup(props, context) {
     let state = createdStore(props, context);
-    let { pagingChange, list, initPagination } = useTable(state, props);
     let { searchFormItem, searchReset, search } = useSearch(state, props);
-    let {
-      filterComponent,
-      filterFormItem,
-      getColor,
-      filterSearch,
-      filterReset,
-    } = useFilter(state, props);
+    let { filterRef, filterFormItem, getColor, filterSearch, filterReset } =
+      useFilter(state, props);
+    let { editRef, save, editFormItem, isEditShow } = useEdit(
+      state,
+      props,
+      context
+    );
+    let { pagingChange, list, initPagination } = useTable(
+      state,
+      props,
+      context
+    );
     initPagination();
     list();
     return {
       searchFormItem,
       filterFormItem,
-      filterComponent,
+      editFormItem,
+      filterRef,
+      editRef,
+      save,
       ...toRefs(state),
       pagingChange,
       cloneDeep,
@@ -148,6 +179,7 @@ export default defineComponent({
       getColor,
       filterSearch,
       filterReset,
+      isEditShow,
     };
   },
 });
@@ -166,10 +198,8 @@ export default defineComponent({
 .antv-table-page .ant-table-body {
   overflow-x: auto;
 }
-/*end antv-table-page*/
 
-/* start*/
-.antv-table-page .ant-form label {
+.antv-table-page .search label {
   /* 开启GPU渲染加速 局部重绘 */
   font-size: 12px;
 }
@@ -177,29 +207,29 @@ export default defineComponent({
   /* 开启GPU渲染加速 局部重绘 */
   transform: translateZ(0);
 }
-.antv-table-page .ant-form {
+.antv-table-page .search {
   margin-bottom: 15px;
 }
-.antv-table-page .ant-form .ant-form-item {
+.antv-table-page .search .ant-form-item {
   display: flex;
   flex-wrap: nowrap;
   margin-bottom: 8px;
 }
-.antv-table-page .ant-form .ant-form-item .ant-form-item-control-wrapper {
+.antv-table-page .search .ant-form-item .ant-form-item-control-wrapper {
   flex: 1 1 auto;
 }
 .antv-table-page
-  .ant-form
+  .search
   .ant-form-item
   .ant-form-item-control-wrapper
   .ant-form-item-children {
   white-space: nowrap;
 }
-.antv-table-page .ant-select,
-.antv-table-page .ant-slider {
+.antv-table-page .search .ant-select,
+.antv-table-page .search .ant-slider {
   min-width: 180px;
 }
-/**end search-wrapper */
+/**end search */
 
 /**start toolbar */
 .antv-table-page .toolbar {
@@ -228,4 +258,27 @@ export default defineComponent({
   width: 80px;
 }
 /*end m-filter */
+
+/*edit start*/
+.antv-table-page .ant-table-tbody td {
+  position: relative;
+}
+.antv-table-page .ant-table-tbody .ant-table-row .ant-input {
+  padding: 0 3px;
+}
+.antv-table-page .ant-table-tbody .ant-table-row .ant-input-affix-wrapper {
+  padding: 0 3px;
+}
+
+.antv-table-page .edit_updated::before {
+  content: "";
+  top: -5px;
+  left: -5px;
+  position: absolute;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #f56c6c transparent transparent;
+  transform: rotate(45deg);
+}
+/*end edit*/
 </style>
