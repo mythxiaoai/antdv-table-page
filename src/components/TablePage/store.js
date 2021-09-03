@@ -1,8 +1,16 @@
 import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
-import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref ,markRaw} from "vue";//可以导出并设置初始值
+import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref, markRaw } from "vue";//可以导出并设置初始值
 
 export const _defaultTable = {
-    rowKey: "id",
+    //自动配置唯一key
+    rowKey: () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (Math.random() * 16) | 0,
+                v = c == 'x' ? r : (r & 0x3) | 0x8
+            return v.toString(16)
+        })
+    },
+    bordered: true,
     pagination: {
         pageSize: 10,
         current: 1,
@@ -14,12 +22,13 @@ export const _defaultTable = {
         current: "pageNo",
         pageSize: "page_size",
     },
+    height:"auto"
 };
 
 const cache = {
     preQuery: null,//上一次的查询条件,为了减少相同条件重复请求
     query: null,//第一次格式化的查询条件,保留第一次进来的默认值，方便重置回初始值
-    preEditValue:null,//上一次修改的查询做缓存
+    preEditValue: null,//上一次修改的查询做缓存
 };
 const defaultSolts = ["search", "search-after", "toolbar"]
 export function createdStore(props, context) {
@@ -32,8 +41,8 @@ export function createdStore(props, context) {
         cache,
         formItem: props.formItem,
         renderFormItem: [],
-        editValue:null,
-        editableData:null,
+        editValue: null,
+        editableData: null,
     });
     //处理参数
     state.opts = merge({}, _defaultTable, context.attrs, props);

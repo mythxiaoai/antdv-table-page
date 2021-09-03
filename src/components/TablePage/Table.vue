@@ -48,6 +48,8 @@
       @change="pagingChange"
       v-bind="opts"
       :dataSource="data"
+      ref="tableRef"
+      :class="{'scroll-table':opts.height==='auto'}"
     >
       <!--这里做插槽转发  把外层插槽在内部slot接收，外层包裹传递过来的在传入a-table插件  因为这里用了这种  所以不支持a-table-column-group组件了-->
       <template v-for="item in slots" #[item]="res">
@@ -146,6 +148,9 @@ export default defineComponent({
         return [];
       },
     },
+    height:{
+      type: String
+    }
   },
   setup(props, context) {
     let state = createdStore(props, context);
@@ -157,7 +162,7 @@ export default defineComponent({
       props,
       context
     );
-    let { pagingChange, list, initPagination } = useTable(
+    let { tableRef,pagingChange, list, initPagination } = useTable(
       state,
       props,
       context
@@ -168,6 +173,7 @@ export default defineComponent({
       searchFormItem,
       filterFormItem,
       editFormItem,
+      tableRef,
       filterRef,
       editRef,
       save,
@@ -281,4 +287,15 @@ export default defineComponent({
   transform: rotate(45deg);
 }
 /*end edit*/
+
+/*scroll-table start*/
+.antv-table-page .scroll-table .ant-table-body {
+  overflow-y: auto;
+}
+.antv-table-page .scroll-table .ant-table-thead {
+  position: sticky;
+  z-index: 999;
+  top: 0;
+}
+/*end scroll-table */
 </style>

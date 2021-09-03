@@ -369,7 +369,7 @@ export default {
     tablePageConfig.dataSource = async (params) => {
       console.log("params", params);
       let { data } = await api.get(
-        "http://yapi.dev.patpat.vip/mock/16/list_filter",
+        "./src/components/TablePage/data/list.json",
         params
       );
       return [data.list, data.total];

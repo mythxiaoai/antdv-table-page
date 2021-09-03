@@ -1,9 +1,10 @@
-import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref } from "vue";//可以导出并设置初始值
-import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
+import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref, onMounted, onUnmounted, ref } from "vue";//可以导出并设置初始值
+import { merge, cloneDeep, isEmpty, isBoolean, isNumber, throttle } from "lodash";
 
 import moment from 'moment'
 
-export function useTable(state, props,context) {
+export function useTable(state, props, context) {
+    let tableRef = ref(null)
     let queryComplete = computed(
         () => {
             //1.处理分页参数[current,pageSize] -->this.pageKey.current,this.pageKey.pageSize  处理传出去的参数
@@ -87,15 +88,41 @@ export function useTable(state, props,context) {
         state.initSearch();//查询
         state.initFilter();//过滤
         state.initEdit(state, props, context);//过滤
-        console.log(state.opts.columns)
     }, { deep: true, immediate: true });
+
+    const setHeight = (time) => {
+        return throttle(
+            function () {
+                let tableBom = tableRef.value.$el
+                const bounding = tableBom.getBoundingClientRect?.() || {}
+                //视口高 - table的上面  - 分页
+                //分页+margin
+                // let pageHeight = (tableBom.querySelector('.ant-pagination')?.offsetHeight || 16) * 2
+                let height = window.innerHeight - bounding.top - 64
+                //设置
+                let dom = tableBom.querySelector('.ant-table-body')
+                dom.style['max-height'] = height + 'px'
+            },
+            time || 50,
+            { leading: false, trailing: true }
+        )()
+    }
+    if (state.opts.height === 'auto') {
+        onMounted(() => {
+            setHeight(200)
+            window.addEventListener('resize', setHeight)
+        })
+        onUnmounted(() => {
+            window.removeEventListener('resize', setHeight)
+        })
+    }
 
     //暴露出去其他模块使用
     state.initPagination = initPagination;
     state.list = list;
 
-    
-    return { list, initPagination, pagingChange, queryComplete }
+
+    return { tableRef, list, initPagination, pagingChange, queryComplete }
 }
 
 //查询是否改变
@@ -167,7 +194,7 @@ function optimize(component, p, s) {
     // if (popComponent.includes(component)) {
     //     s.getPopupContainer = ()=>unref(state.editRef)
     // }
-    
+
 }
 
 function isMoment(value) {
