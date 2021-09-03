@@ -3,9 +3,7 @@ import { merge, cloneDeep, isEmpty, isBoolean, isNumber, get } from "lodash";
 import { EditOutlined } from "@ant-design/icons-vue";
 
 //AAutoComplete ACascader:[]  ACheckboxGroup:[] AMentions:[] ASelect:[]|String x:"multiple",ATreeSelect:string|string[]
-const optionsComponentModel = ["a-select"]
-const optionsComponent = ["a-auto-complete","a-cascader"]
-
+const optionsComponent = ["a-auto-complete","a-cascader","a-select","a-checkbox-group","a-select"]
 //ARangePicker:[]
 export function useEdit(state, props, context) {
   let editRef = ref(null)
@@ -73,8 +71,12 @@ export function useEdit(state, props, context) {
     //data回显的数据
     let value = get(state.data[index], columns.dataIndex)
     //label 是否需要用label回显
-    if (renderFormItem?.s?.options) {
-      value = renderFormItem?.s?.options.find(v => v.value === value)?.label || value;
+    if (optionsComponent.includes(renderFormItem.component)) {
+      if(renderFormItem.component === 'a-select' && renderFormItem.s?.mode ==='multiple'){
+        value = renderFormItem?.s?.options.filter(v => v.value === value).map(v=>v.label).join(',') || value;
+      }else{
+        value = renderFormItem?.s?.options.find(v => v.value === value)?.label || value;
+      }
     }
     let label = get(state.data[index], columns.dataIndex)
     let keyUserSeting, keyOperator;
