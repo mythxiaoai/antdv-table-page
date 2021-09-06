@@ -108,10 +108,10 @@ a:userId: {
 - toolbar 自定义查询 {query} 查询query拓展 表格按钮操作栏  方便做导出
 
 ## 方法
-search 重新调用查询方法(会重置分页)
-searchReset 重置
-pagingChange({curremt}) 跳转到指定页
-reflush 刷新(不会重置分页)
+- reflush 刷新(不会重置分页)
+- search 重新调用查询方法(会重置分页)
+- searchReset 重置
+- pagingChange({curremt}) 跳转到指定页
 
 
 # 写在最后
