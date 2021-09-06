@@ -26,12 +26,10 @@ yarn dev
 1. 查询 [✔]
 2. 表格二次筛选 [✔]
 3. 自适应列宽(根据内容自适应宽度而不用每个列配置width) [✔]
-4. 分页(分页与请求解耦,妈妈再也不用担心Page小九九了) [✔]
-5. 数据默认值配置(不同系统可以设置Page传参和a-table默认值) [✔]
-6. 自定义显示列字段(同步导出) [-]
-7. 查询，二次筛选，几乎支持ant-desgin全表单控件，组件配置共享(a-transfer和a-upload不支持) [✔]
-8. 几乎全部支持原本ant-table所有配置 [✔]
-
+4. 分页参数自动携带(分页与请求解耦,妈妈再也不用担心Page小九九了) [✔]
+5. 数据默认值配置(可配置默认参数_defaultTable,让表格组件整体统一) [✔]
+6. 查询，二次筛选，几乎支持ant-desgin全表单控件21个表单控件的支持，组件配置共享(a-transfer和a-upload不支持) [✔]
+7. 几乎全部支持原本ant-table所有配置 [✔]
 
 # 使用
 ## 默认配置
@@ -84,11 +82,11 @@ this.tablePageConfig.dataSource = async (params) => {
 ```
 - formItem:Object 按照下面例子讲解
   - 整体a的外层除了 component value props filter 其他配置加上外层的key会作为AFormItem的v-bind绑定,里层props会作为子组件的属性绑定
-  - a:作为key 意义与columns的dataIndex对应 查询的query会携带a:XX 也会作为AFormItem的name属性绑定，如果含有：会以冒号后面userId作为query携带，如果search:"userInfo"会以这个优先级有限，query的优先级，里层的serarch:"key" > "a:userId"的userId > "a:userId"的a
-  - component：表单控件用什么组件渲染,内部用vue提供的component组件去实现的
+  - Key(a):作为key 意义与columns的dataIndex对应 查询的query会携带a:XX 也会作为AFormItem的name属性绑定，如果含有：会以冒号后面userId作为query携带，如果search:"userInfo"会以这个优先级有限，query的优先级，里层的serarch:"key" > "a:userId"的userId > "a:userId"的a
+  - component：表单控件用什么组件渲染,内部用vue提供的component组件去实现的 支持全ant表单控件(21个)"AInput"或"a-input"都支持
   - value：初始值 不同的控件初始值需要注意下
-  - props: 表单控件的属性直接v-bind绑定  也就是说事件也是支持的 such:onClick
-  - search true|false 是否查询表格，默认true
+  - props: 表单控件的属性直接v-bind绑定  也就是说事件也是支持的 eg:onClick
+  - search true|false 是否查询表格，如果有写key则默认查询true
   - filter true|false 是否过滤  与查询互斥
 ```
 a:userId: {
