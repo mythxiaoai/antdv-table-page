@@ -1,23 +1,12 @@
 <template>
   <div class="antv-table-page">
-    <!-- <p>query:{{ query }}</p> -->
-    <!-- <p>renderFormItem:{{ renderFormItem }}</p> -->
-    <!-- <p>searchFormItem:{{ searchFormItem }}</p> -->
-    <!-- <p>filterFormItem:{{ filterFormItem }}</p> -->
-    <!-- <p>editFormItem:{{ editFormItem }}</p> -->
-    <!-- <p>opts:{{ opts.columns }}</p> -->
-    <!-- <p>editTitleSlots:{{ editTitleSlots }}</p> -->
-    <!-- <p>renderSlots:{{ renderSlots }}</p> -->
-    <!-- <p>editableData:{{ editableData }}</p> -->
-    <!-- <p>data:{{ data }}</p> -->
-
     <!--search start-->
     <slot name="search" :query="query">
       <a-form layout="inline" @keyup.enter="search">
         <template v-for="item in searchFormItem" :key="item.p.name">
           <a-form-item v-bind="item.p">
             <ant-component
-              :attr="item.s"
+              :props="item.s"
               :component="item.component"
               v-model:value="query[item.p.name]"
             ></ant-component>
@@ -25,9 +14,7 @@
         </template>
         <a-form-item v-if="searchFormItem.length > 0">
           <a-space>
-            <a-button type="primary" @click="search"
-              ><SearchOutlined />查询
-            </a-button>
+            <a-button type="primary" @click="search"><SearchOutlined />查询 </a-button>
             <a-button @click="searchReset">
               <ReloadOutlined />
               重置
@@ -49,6 +36,8 @@
       @change="pagingChange"
       v-bind="opts"
       :dataSource="data"
+      ref="tableRef"
+      :class="{ 'scroll-table': opts.height === 'auto' }"
     >
       <!--这里做插槽转发  把外层插槽在内部slot接收，外层包裹传递过来的在传入a-table插件  因为这里用了这种  所以不支持a-table-column-group组件了-->
       <template v-for="item in slots" #[item]="res">
@@ -60,18 +49,14 @@
       </template>
       <template #_filterDropdown="{ column, confirm }">
         <div class="m-filter" style="padding: 8px" @keyup.enter="filterSearch(confirm)">
-            <ant-component
-              :attr="filterFormItem[column.key].s"
-              :component="filterFormItem[column.key].component"
-              v-model:value="query[column.key]"
-              ref="filterComponent"
-            ></ant-component>
+          <ant-component
+            :props="filterFormItem[column.key].s"
+            :component="filterFormItem[column.key].component"
+            v-model:value="query[column.key]"
+            ref="filterComponent"
+          ></ant-component>
           <div class="opts">
-            <a-button
-              type="primary"
-              size="small"
-              @click="filterSearch(confirm)"
-            >
+            <a-button type="primary" size="small" @click="filterSearch(confirm)">
               <SearchOutlined />查询
             </a-button>
             <a-button size="small" @click="filterReset(column, confirm)">
@@ -88,55 +73,56 @@
 </template>
 
 <script>
-import {
-  SearchOutlined,
-  ReloadOutlined,
-  FilterFilled,
-} from "@ant-design/icons-vue";
-import AntComponent from "./AntComponent.vue";
-import { defineComponent, toRefs } from "vue";
+import { SearchOutlined, ReloadOutlined, FilterFilled } from '@ant-design/icons-vue'
+import AntComponent from './AntComponent.vue'
+import { defineComponent, toRefs } from 'vue'
+import { createdStore, _defaultTable as defaultConfig } from './store.js'
+import { useTable } from './table.js'
+import { useSearch } from './search.js'
+import { useFilter } from './filter.js'
+import { cloneDeep } from 'lodash'
+
 //外界可以导出修改配置
-import { createdStore } from "./store.js";
-import { useTable } from "./table.js";
-import { useSearch } from "./search.js";
-import { useFilter } from "./filter.js";
-import { cloneDeep } from "lodash";
+export let _defaultTable = defaultConfig
 
 export default defineComponent({
   inheritAttrs: false,
-  name: "table-page",
+  name: 'table-page',
   components: {
     SearchOutlined,
     ReloadOutlined,
     FilterFilled,
-    AntComponent,
+    AntComponent
   },
   props: {
     formItem: {
       type: Object,
-      default: () => {},
+      default() {
+        return {}
+      }
     },
     dataSource: {
       type: [Function, Array],
       default() {
-        return [];
-      },
+        return []
+      }
     },
+    height: {
+      type: String
+    }
   },
   setup(props, context) {
-    let state = createdStore(props, context);
-    let { pagingChange, list, initPagination } = useTable(state, props);
-    let { searchFormItem, searchReset, search } = useSearch(state, props);
-    let {
-      filterComponent,
-      filterFormItem,
-      getColor,
-      filterSearch,
-      filterReset,
-    } = useFilter(state, props);
-    initPagination();
-    list();
+    let state = createdStore(props, context)
+    let { searchFormItem, searchReset, search } = useSearch(state, props)
+    let { filterComponent, filterFormItem, getColor, filterSearch, filterReset } = useFilter(
+      state,
+      props
+    )
+    let { tableRef, pagingChange, list, initPagination } = useTable(state, props)
+    initPagination()
+    list()
     return {
+      tableRef,
       searchFormItem,
       filterFormItem,
       filterComponent,
@@ -145,12 +131,13 @@ export default defineComponent({
       cloneDeep,
       searchReset,
       search,
+      reflush: list,
       getColor,
       filterSearch,
-      filterReset,
-    };
-  },
-});
+      filterReset
+    }
+  }
+})
 </script>
 
 <style>
@@ -188,11 +175,7 @@ export default defineComponent({
 .antv-table-page .ant-form .ant-form-item .ant-form-item-control-wrapper {
   flex: 1 1 auto;
 }
-.antv-table-page
-  .ant-form
-  .ant-form-item
-  .ant-form-item-control-wrapper
-  .ant-form-item-children {
+.antv-table-page .ant-form .ant-form-item .ant-form-item-control-wrapper .ant-form-item-children {
   white-space: nowrap;
 }
 .antv-table-page .ant-select,
@@ -210,9 +193,6 @@ export default defineComponent({
 }
 /**end  toolbar*/
 /*start m-filter */
-.m-filter {
-  /* text-align: center; */
-}
 .m-filter .ant-select,
 .m-filter .ant-slider,
 .m-filter .ant-time-picker {
@@ -228,4 +208,15 @@ export default defineComponent({
   width: 80px;
 }
 /*end m-filter */
+
+/*scroll-table start*/
+.antv-table-page .scroll-table .ant-table-body {
+  overflow-y: auto;
+}
+.antv-table-page .scroll-table .ant-table-thead {
+  position: sticky;
+  z-index: 999;
+  top: 0;
+}
+/*end scroll-table */
 </style>

@@ -1,14 +1,16 @@
-import { defineComponent, toRefs, reactive, shallowReactive, watch, computed, unref,ref,onMounted,nextTick } from "vue";//可以导出并设置初始值
-import { merge, cloneDeep, isEmpty, isBoolean, isNumber } from "lodash";
+import { computed, ref, nextTick } from 'vue' //可以导出并设置初始值
+import { cloneDeep, isEmpty, isBoolean, isNumber } from 'lodash'
 
 export function useFilter(state) {
   let filterComponent = ref(null)
   let filterFormItem = computed(() => {
-    return state.renderFormItem.filter((v) => {
-      return v.filter
-    }).reduce((res, next) => ((res[next.p.name] = next), res), {})
-  });
- 
+    return state.renderFormItem
+      .filter((v) => {
+        return v.filter
+      })
+      .reduce((res, next) => ((res[next.p.name] = next), res), {})
+  })
+
   let initFilter = () => {
     let columns = cloneDeep(state.opts.columns)
     state.opts.columns = columns.map((v) => {
@@ -16,8 +18,10 @@ export function useFilter(state) {
       return dealChaildren(v, (v) => {
         if (!v.dataIndex) return v
         //  roleName:roleId  columns[]dataIndex:"list.roleName"   roleName ==roleName
-        let renderFormItem = state.renderFormItem.find(k => k.p.name.split(":")[0] == v.dataIndex.split(".").pop());
-        if (!renderFormItem.component || !renderFormItem.filter) return v;
+        let renderFormItem = state.renderFormItem.find(
+          (k) => k.p.name.split(':')[0] == v.dataIndex.split('.').pop()
+        )
+        if (!renderFormItem?.component || !renderFormItem?.filter) return v
         //先储存全量的key
         v.key = renderFormItem.p.name
         v.slots = v.slots ?? {}
@@ -25,7 +29,7 @@ export function useFilter(state) {
         v.slots.filterIcon = '_filterIcon'
         v.onFilterDropdownVisibleChange = async (visible) => {
           if (visible) {
-            await nextTick();
+            await nextTick()
             //获取元素焦点
             state.filterComponent.$el.focus?.()
           } else {
@@ -49,14 +53,15 @@ export function useFilter(state) {
     }
     return { color: res ? '#108ee9' : undefined }
   }
-  let filterSearch = close => close()
+  let filterSearch = (close) => close()
 
   let filterReset = (column, close) => {
     state.query[column.key] = state.cache.query[column.key]
     close()
   }
-  state.filterComponent = filterComponent;
-  return { filterComponent,filterFormItem, initFilter, getColor, filterSearch, filterReset }
+  state.filterComponent = filterComponent
+  state.initFilter = initFilter
+  return { filterComponent, filterFormItem, initFilter, getColor, filterSearch, filterReset }
 }
 
 function dealChaildren(v, cb) {
