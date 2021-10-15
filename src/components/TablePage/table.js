@@ -65,7 +65,7 @@ export function useTable(state, props) {
       state.opts.pagination && (state.opts.pagination.total = state.opts.dataSource.length)
       return
     }
-    if (!isQueryChange(state.cache.preQuery, unref(queryComplete))) return
+    // if (!isQueryChange(state.cache.preQuery, unref(queryComplete))) return  查询会有问题 暂时注释缓存
     state.loading = true
     let data, total
     try {
@@ -78,7 +78,7 @@ export function useTable(state, props) {
     state.data = data || []
     if (state.opts.pagination) state.opts.pagination.total = total ?? 0
     //记录
-    state.cache.preQuery = cloneDeep(unref(queryComplete))
+    // state.cache.preQuery = cloneDeep(unref(queryComplete))
   }
 
   watch(

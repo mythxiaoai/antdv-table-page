@@ -36,9 +36,9 @@ export function useFilter(state) {
             //查询
             //当点击确定和移开和重置都会触发
             //新老值没发生变化就不触发查询
-            if (state.cache.preQuery !== JSON.stringify(state.query)) {
+            // if (state.cache.preQuery !== JSON.stringify(state.query)) {
               state.search()
-            }
+            // }
           }
         }
         return v

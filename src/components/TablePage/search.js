@@ -26,7 +26,7 @@ export function useSearch(state) {
   let searchReset = () => {
     state.initPagination()
     //重置参数
-    state.query = state.cache.query
+    state.query = cloneDeep(state.cache.query)
   }
   state.search = search
   state.initSearch = initSearch
